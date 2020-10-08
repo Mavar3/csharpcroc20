@@ -21,22 +21,9 @@ namespace CROCK_CsharpBot
         {
             switch (e.Message.Type)
             {
-                case Telegram.Bot.Types.Enums.MessageType.Location:
-                    client.SendTextMessageAsync(e.Message.Chat.Id, $"Пока я не умею работать с таким типом данных, но я учусь.");
-                    Console.WriteLine("Пользователь запросил геолокацию");
-                    break;
                 case Telegram.Bot.Types.Enums.MessageType.Contact:
                     string phone = e.Message.Contact.PhoneNumber;
-                    if (e.Message.Chat.Id == e.Message.Contact.UserId)
-                    {
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
-                        Console.WriteLine($"Телефон пользователя: {e.Message.Chat.FirstName} ({e.Message.Contact.UserId}): {e.Message.Contact.PhoneNumber}");
-                    }
-                    else
-                    {
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Это не твой телефон(!): {phone}");
-                        Console.WriteLine($"Пользователя: {e.Message.Contact.UserId} {e.Message.Chat.FirstName} - обманщик");
-                    }
+                    client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Text:
                     if (e.Message.Text.Substring(0, 1) == "/")
@@ -70,7 +57,7 @@ namespace CROCK_CsharpBot
                     button.RequestContact = true;
                     var array = new KeyboardButton[] { button };
                     var reply = new ReplyKeyboardMarkup(array, true, true );
-                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName} скажи мне свой телефон: ", replyMarkup: reply);
+                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName} скажи мне свой телефон: ");
                     break;
                 default:
                     client.SendTextMessageAsync(message.Chat.Id, $"Я пока не понимаю команду: {comand}");
