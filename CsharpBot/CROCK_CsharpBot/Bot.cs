@@ -24,7 +24,7 @@ namespace CROCK_CsharpBot
             switch (e.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.Photo:
-                    Console.WriteLine("Начало сохранения и отправки сохранённого.");
+                    Console.WriteLine("\nНачало сохранения и отправки сохранённого.\n");
                     DownloadPhoto(e.Message.Photo.LastOrDefault().FileId);
                     Thread.Sleep(1000);
                     SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
@@ -38,12 +38,12 @@ namespace CROCK_CsharpBot
                     if (e.Message.Chat.Id == e.Message.Contact.UserId)
                     {
                         client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
-                        Console.WriteLine($"Телефон пользователя: {e.Message.Chat.FirstName} ({e.Message.Contact.UserId}): {e.Message.Contact.PhoneNumber}");
+                        Console.WriteLine($"/n Телефон пользователя: {e.Message.Chat.FirstName} ({e.Message.Contact.UserId}): {e.Message.Contact.PhoneNumber} /n");
                     }
                     else
                     {
                         client.SendTextMessageAsync(e.Message.Chat.Id, $"Это не твой телефон(!): {phone}");
-                        Console.WriteLine($"Пользователя: {e.Message.Contact.UserId} {e.Message.Chat.FirstName} - обманщик");
+                        Console.WriteLine($"/nПользователя: {e.Message.Contact.UserId} {e.Message.Chat.FirstName} - обманщик/n");
                     }
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Text:
@@ -79,7 +79,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 d: {filename}");
+                Console.WriteLine($"File name 4 d: {filename}/n");
                 using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
                 {
                     await client.DownloadFileAsync(file.FilePath, saveImageStream);
@@ -103,7 +103,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 s: {filename}");
+                Console.WriteLine($"File name 4 s: {filename}\n");
                 using (var sendImageStream = System.IO.File.OpenRead(filename))
                 {
                     // await client.SendMediaGroupAsync(chatId, sendImageStream, false);
@@ -123,11 +123,11 @@ namespace CROCK_CsharpBot
             switch (comand)
             {
                 case "start":
-                    var button = new KeyboardButton("Поделимь телефоном");
+                    var button = new KeyboardButton("Поделиcь телефоном");
                     button.RequestContact = true;
                     var array = new KeyboardButton[] { button };
                     var reply = new ReplyKeyboardMarkup(array, true, true );
-                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName} скажи мне свой телефон: ", replyMarkup: reply);
+                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон: ", replyMarkup: reply);
                     break;
                 default:
                     client.SendTextMessageAsync(message.Chat.Id, $"Я пока не понимаю команду: {comand}");
