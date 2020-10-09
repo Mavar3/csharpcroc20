@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
+using System.Threading;
 
 namespace CROCK_CsharpBot
 {
@@ -25,6 +26,7 @@ namespace CROCK_CsharpBot
                 case Telegram.Bot.Types.Enums.MessageType.Photo:
                     Console.WriteLine("Начало сохранения и отправки сохранённого.");
                     DownloadPhoto(e.Message.Photo.LastOrDefault().FileId);
+                    Thread.Sleep(1000);
                     SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Location:
@@ -77,7 +79,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine(filename);
+                Console.WriteLine($"File name 4 d: {filename}");
                 using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
                 {
                     await client.DownloadFileAsync(file.FilePath, saveImageStream);
@@ -101,9 +103,10 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine(filename);
+                Console.WriteLine($"File name 4 s: {filename}");
                 using (var sendImageStream = System.IO.File.OpenRead(filename))
                 {
+                    // await client.SendMediaGroupAsync(chatId, sendImageStream, false);
                     await client.SendPhotoAsync(chatId, sendImageStream, "That's your photo. I saved it on server and than resend!");
                 }
             }
