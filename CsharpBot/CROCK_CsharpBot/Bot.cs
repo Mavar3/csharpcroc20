@@ -79,7 +79,8 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 d: {filename}/n");
+                Console.WriteLine($"File name 4 d: {filename}\n" +
+                    $"-----------------------------------");
                 using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
                 {
                     await client.DownloadFileAsync(file.FilePath, saveImageStream);
