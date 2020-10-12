@@ -19,30 +19,29 @@ namespace CROCK_CsharpBot
             client.OnMessage += MessagProcessor;
         }
 
-        private void MessagProcessor(object sender, Telegram.Bot.Args.MessageEventArgs e)
+        private async void MessagProcessor(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             switch (e.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.Photo:
                     Console.WriteLine("\nНачало сохранения и отправки сохранённого.\n");
-                    DownloadPhoto(e.Message.Photo.LastOrDefault().FileId);
-                    Thread.Sleep(1000);
-                    SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
+                    await DownloadPhoto(e.Message.Photo.LastOrDefault().FileId);
+                    await SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Location:
-                    client.SendTextMessageAsync(e.Message.Chat.Id, $"Пока я не умею работать с таким типом данных, но я учусь.");
+                    await client.SendTextMessageAsync(e.Message.Chat.Id, $"Пока я не умею работать с таким типом данных, но я учусь.");
                     Console.WriteLine("Пользователь запросил геолокацию");
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Contact:
                     string phone = e.Message.Contact.PhoneNumber;
                     if (e.Message.Chat.Id == e.Message.Contact.UserId)
                     {
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
+                        await client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
                         Console.WriteLine($"/n Телефон пользователя: {e.Message.Chat.FirstName} ({e.Message.Contact.UserId}): {e.Message.Contact.PhoneNumber} /n");
                     }
                     else
                     {
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Это не твой телефон(!): {phone}");
+                        await client.SendTextMessageAsync(e.Message.Chat.Id, $"Это не твой телефон(!): {phone}");
                         Console.WriteLine($"/nПользователя: {e.Message.Contact.UserId} {e.Message.Chat.FirstName} - обманщик/n");
                     }
                     break;
@@ -53,19 +52,17 @@ namespace CROCK_CsharpBot
                     }
                     else
                     {
-                        client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There");
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Ты сказал мне: {e.Message.Text}");
+                        await client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There\n" +
+                            $"Ты сказал мне: {e.Message.Text}");
                         Console.WriteLine(e.Message.Text);
                     }
                     break;
                 default:
-                    client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There");
-                    client.SendTextMessageAsync(e.Message.Chat.Id, $"Ты прислал мне: {e.Message.Type}");
+                    await client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There\n" +
+                        $"Ты прислал мне: {e.Message.Type}");
                     Console.WriteLine(e.Message.Type);
                     break;
-
             }
-
             // throw new NotImplementedException();
         }
 
@@ -73,7 +70,7 @@ namespace CROCK_CsharpBot
         /// Загрузка фотографий из телеграм
         /// </summary>
         /// <param name="fileId">Id файла</param>
-        private async void DownloadPhoto(string fileId)
+        private async Task DownloadPhoto(string fileId)
         {
             try
             {
@@ -92,13 +89,12 @@ namespace CROCK_CsharpBot
             }
         }
 
-
         /// <summary>
         /// Отправка сохранённой фотографии на клиент
         /// </summary>
         /// <param name="fileId">Id фотографии</param>
         /// <param name="chatId">Id чата</param>
-        private async void SendPhoto(string fileId, long chatId)
+        private async Task SendPhoto(string fileId, long chatId)
         {
             try
             {
@@ -117,15 +113,16 @@ namespace CROCK_CsharpBot
             }
         }
 
-
         private void CommadProcessor(Telegram.Bot.Types.Message message)
         {
             string comand = message.Text.Substring(1).ToLower();
             switch (comand)
             {
                 case "start":
-                    var button = new KeyboardButton("Поделиcь телефоном");
-                    button.RequestContact = true;
+                    var button = new KeyboardButton("Поделиcь телефоном")
+                    {
+                        RequestContact = true
+                    };
                     var array = new KeyboardButton[] { button };
                     var reply = new ReplyKeyboardMarkup(array, true, true );
                     client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон: ", replyMarkup: reply);
