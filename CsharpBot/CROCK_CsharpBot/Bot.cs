@@ -13,13 +13,13 @@ namespace CROCK_CsharpBot
     public class Bot
     {
         private TelegramBotClient client;
-        private Downloader downloader;
-        private Sender sender1;
+        private Downloader server_downloader;
+        private Sender server_sender;
         public Bot()
         {
             client = new TelegramBotClient("1322961991:AAEqbpx7E4TlC7Wont1yjOhdpveip0PCvO0");
-            downloader = new Downloader(client);
-            sender1 = new Sender(client);
+            server_downloader = new Downloader(client);
+            server_sender = new Sender(client);
             client.OnMessage += MessagProcessor;
         }
 
@@ -29,13 +29,13 @@ namespace CROCK_CsharpBot
             {
                 case Telegram.Bot.Types.Enums.MessageType.Document:
                     Console.WriteLine("\nНачало сохранения и отправки сохранённого документа.\n");
-                    await downloader.DownloadPhotoOrDocument(e.Message.Document.FileId);
-                    await sender1.SendDocument(e.Message.Document.FileId, e.Message.Chat.Id);
+                    await server_downloader.DownloadPhotoOrDocument(e.Message.Document.FileId);
+                    await server_sender.SendDocument(e.Message.Document.FileId, e.Message.Chat.Id);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Photo:
                     Console.WriteLine("\nНачало сохранения и отправки сохранённого фото.\n");
-                    await downloader.DownloadPhotoOrDocument(e.Message.Photo.LastOrDefault().FileId);
-                    await sender1.SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
+                    await server_downloader.DownloadPhotoOrDocument(e.Message.Photo.LastOrDefault().FileId);
+                    await server_sender.SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Location:
                     await client.SendTextMessageAsync(e.Message.Chat.Id, $"Пока я не умею работать с таким типом данных, но я учусь.");
