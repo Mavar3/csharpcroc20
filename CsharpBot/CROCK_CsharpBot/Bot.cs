@@ -13,9 +13,13 @@ namespace CROCK_CsharpBot
     public class Bot
     {
         private TelegramBotClient client;
+        private Downloader downloader;
+        private Sender sender1;
         public Bot()
         {
             client = new TelegramBotClient("1322961991:AAEqbpx7E4TlC7Wont1yjOhdpveip0PCvO0");
+            downloader = new Downloader(client);
+            sender1 = new Sender(client);
             client.OnMessage += MessagProcessor;
         }
 
@@ -23,10 +27,15 @@ namespace CROCK_CsharpBot
         {
             switch (e.Message.Type)
             {
+                case Telegram.Bot.Types.Enums.MessageType.Document:
+                    Console.WriteLine("\nНачало сохранения и отправки сохранённого документа.\n");
+                    await downloader.DownloadPhotoOrDocument(e.Message.Document.FileId);
+                    await sender1.SendDocument(e.Message.Document.FileId, e.Message.Chat.Id);
+                    break;
                 case Telegram.Bot.Types.Enums.MessageType.Photo:
-                    Console.WriteLine("\nНачало сохранения и отправки сохранённого.\n");
-                    await DownloadPhoto(e.Message.Photo.LastOrDefault().FileId);
-                    await SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
+                    Console.WriteLine("\nНачало сохранения и отправки сохранённого фото.\n");
+                    await downloader.DownloadPhotoOrDocument(e.Message.Photo.LastOrDefault().FileId);
+                    await sender1.SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Location:
                     await client.SendTextMessageAsync(e.Message.Chat.Id, $"Пока я не умею работать с таким типом данных, но я учусь.");
@@ -64,53 +73,6 @@ namespace CROCK_CsharpBot
                     break;
             }
             // throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Загрузка фотографий из телеграм
-        /// </summary>
-        /// <param name="fileId">Id файла</param>
-        private async Task DownloadPhoto(string fileId)
-        {
-            try
-            {
-                var file = await client.GetFileAsync(fileId);
-                var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 d: {filename}\n" +
-                    $"-----------------------------------");
-                using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
-                {
-                    await client.DownloadFileAsync(file.FilePath, saveImageStream);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error downloading: " + ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Отправка сохранённой фотографии на клиент
-        /// </summary>
-        /// <param name="fileId">Id фотографии</param>
-        /// <param name="chatId">Id чата</param>
-        private async Task SendPhoto(string fileId, long chatId)
-        {
-            try
-            {
-                var file = await client.GetFileAsync(fileId);
-                var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 s: {filename}\n");
-                using (var sendImageStream = System.IO.File.OpenRead(filename))
-                {
-                    // await client.SendMediaGroupAsync(chatId, sendImageStream, false);
-                    await client.SendPhotoAsync(chatId, sendImageStream, "That's your photo. I saved it on server and than resend!");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error downloading: " + ex.Message);
-            }
         }
 
         private void CommadProcessor(Telegram.Bot.Types.Message message)
