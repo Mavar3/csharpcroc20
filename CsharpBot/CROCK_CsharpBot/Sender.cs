@@ -10,6 +10,7 @@ namespace CROCK_CsharpBot
 {
     public class Sender
     {
+        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
         private TelegramBotClient client;
         public Sender(TelegramBotClient client)
         {
@@ -27,7 +28,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 s: {filename}\n");
+                log.Trace($"File name 4 s: {filename}\n");
                 using (var sendImageStream = System.IO.File.OpenRead(filename))
                 {
                     await client.SendDocumentAsync(chatId, sendImageStream, "That's your document. I saved it on server and than resend!");
@@ -35,7 +36,7 @@ namespace CROCK_CsharpBot
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error downloading: " + ex.Message);
+                log.Error("Error downloading: " + ex.Message);
             }
         }
 
@@ -50,7 +51,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 s: {filename}\n");
+                log.Trace($"File name 4 s: {filename}\n");
                 using (var sendImageStream = System.IO.File.OpenRead(filename))
                 {
                     // await client.SendMediaGroupAsync(chatId, sendImageStream, false);
@@ -59,7 +60,7 @@ namespace CROCK_CsharpBot
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error downloading: " + ex.Message);
+                log.Error("Error downloading: " + ex.Message);
             }
         }
     }

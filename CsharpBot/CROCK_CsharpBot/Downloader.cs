@@ -11,6 +11,7 @@ namespace CROCK_CsharpBot
 {
     public class Downloader
     {
+        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
         private TelegramBotClient client;
         public Downloader(TelegramBotClient client)
         {
@@ -27,7 +28,7 @@ namespace CROCK_CsharpBot
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                Console.WriteLine($"File name 4 d: {filename}\n" +
+                log.Trace($"File name 4 d: {filename}\n" +
                     $"-----------------------------------");
                 using (var saveImageOrDocStream = System.IO.File.Open(filename, FileMode.Create))
                 {
@@ -36,7 +37,7 @@ namespace CROCK_CsharpBot
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error downloading: " + ex.Message);
+                log.Error("Error downloading: " + ex.Message);
             }
         }
 
