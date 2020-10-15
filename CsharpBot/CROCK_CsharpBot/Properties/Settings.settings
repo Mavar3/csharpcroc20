@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CROCK_CsharpBot.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Token" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1322961991:AAEqbpx7E4TlC7Wont1yjOhdpveip0PCvO0</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

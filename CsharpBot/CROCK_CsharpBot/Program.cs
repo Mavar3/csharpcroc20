@@ -10,14 +10,32 @@ namespace CROCK_CsharpBot
 {
     class Program
     {
-
+        private static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            Console.WriteLine("Запуск бота в консольном режиме.\nНажмите Enter для завершения работы.");
-            Bot bot;
-            bot = new Bot();
-            bot.Run();
-            Console.ReadLine();
+            try 
+            {
+                Bot bot;
+                bot = new Bot();
+                bot.Run();
+                log.Info("Запуск бота в консольном режиме.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка");
+                // Отображкние сообщения, включая вложенные
+                do
+                {
+                    log.Fatal(ex.Message);
+                    ex = ex.InnerException;
+                }
+                while (ex != null);
+            }
+            finally
+            {
+                Console.WriteLine("Нажмите Enter для завершения.");
+                Console.ReadLine();
+            }
         }
     }
 }
