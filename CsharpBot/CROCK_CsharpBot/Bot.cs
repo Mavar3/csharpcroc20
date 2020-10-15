@@ -52,7 +52,8 @@ namespace CROCK_CsharpBot
                         string phone = e.Message.Contact.PhoneNumber;
                         if (e.Message.Chat.Id == e.Message.Contact.UserId)
                         {
-                            await client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
+                            var keyboardRemove = new ReplyKeyboardRemove();
+                            await client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}", replyMarkup: keyboardRemove); // , replyMarkup: null);
                             log.Info($"/n Телефон пользователя: {e.Message.Chat.FirstName} ({e.Message.Contact.UserId}): {e.Message.Contact.PhoneNumber} /n");
                         }
                         else
@@ -104,6 +105,9 @@ namespace CROCK_CsharpBot
                     var array = new KeyboardButton[] { button };
                     var reply = new ReplyKeyboardMarkup(array, true, true );
                     client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон: ", replyMarkup: reply);
+                    break;
+                case "info":
+                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, этот бот сделан на основе авторского курса от Крок!");
                     break;
                 default:
                     client.SendTextMessageAsync(message.Chat.Id, $"Я пока не понимаю команду: {comand}");
