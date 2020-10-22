@@ -31,5 +31,14 @@ namespace CROCK_CsharpBot.Properties {
                 return ((string)(this["Token"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\botstate.xml")]
+        public string FileName {
+            get {
+                return ((string)(this["FileName"]));
+            }
+        }
     }
 }

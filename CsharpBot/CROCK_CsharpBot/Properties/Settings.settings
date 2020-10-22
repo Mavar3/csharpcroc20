@@ -5,5 +5,8 @@
     <Setting Name="Token" Type="System.String" Scope="Application">
       <Value Profile="(Default)">1322961991:AAEqbpx7E4TlC7Wont1yjOhdpveip0PCvO0</Value>
     </Setting>
+    <Setting Name="FileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\botstate.xml</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
