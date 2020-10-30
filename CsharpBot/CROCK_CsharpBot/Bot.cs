@@ -269,6 +269,12 @@ namespace CROCK_CsharpBot
 
         public void StartCommand(Telegram.Bot.Types.Message message)
         {
+            client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, зарегистрируйся /registration");
+        }
+
+        public void RegistrationCommand(Telegram.Bot.Types.Message message)
+        {
+            User user = state[message.Chat.Id];
             var button = new KeyboardButton("Поделиcь телефоном")
             {
                 RequestContact = true
@@ -276,11 +282,17 @@ namespace CROCK_CsharpBot
             var array = new KeyboardButton[] { button };
             var reply = new ReplyKeyboardMarkup(array, true, true);
             client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон: ", replyMarkup: reply);
+            //user.userState = UserState.Reg;
         }
 
-        public void Run()
+        public void Start()
         {
             client.StartReceiving();
+        }
+
+        public void Stop()
+        {
+            client.StopReceiving();
         }
     }
 }

@@ -9,6 +9,7 @@ namespace CROCK_CsharpBot
 {
     public class User
     {
+        public UserState userState;
         /// <summary>
         /// ID пользователя
         /// </summary>

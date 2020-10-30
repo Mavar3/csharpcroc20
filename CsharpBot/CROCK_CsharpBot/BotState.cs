@@ -20,6 +20,15 @@ namespace CROCK_CsharpBot
         [XmlElement(ElementName = "User")]
         public User[] Users;
 
+        public User this[long id]
+        {
+            get
+            {
+                User user = Users.Where(a => a.ID == id).FirstOrDefault();
+                return user;
+            }
+        }
+
         /// <summary>
         /// Добавление пользователя в массив
         /// </summary>
