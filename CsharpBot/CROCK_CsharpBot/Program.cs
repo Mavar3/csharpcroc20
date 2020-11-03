@@ -35,7 +35,9 @@ namespace CROCK_CsharpBot
                         ManagedInstallerClass.InstallHelper(new string[] { name });
                         break;
                     case "uninstall":
-                        ManagedInstallerClass.InstallHelper(new string[] { $"/u " + name });
+                    case "remove":
+                    case "delete":
+                        ManagedInstallerClass.InstallHelper(new string[] { "/u", name });
                         break;
                     case "":
                         var svc = new BotService();

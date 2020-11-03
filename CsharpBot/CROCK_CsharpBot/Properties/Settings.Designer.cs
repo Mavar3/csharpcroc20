@@ -40,5 +40,29 @@ namespace CROCK_CsharpBot.Properties {
                 return ((string)(this["FileName"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Photos")]
+        public string SavedPhotoDir {
+            get {
+                return ((string)(this["SavedPhotoDir"]));
+            }
+            set {
+                this["SavedPhotoDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Documents")]
+        public string SavedDocumentDir {
+            get {
+                return ((string)(this["SavedDocumentDir"]));
+            }
+            set {
+                this["SavedDocumentDir"] = value;
+            }
+        }
     }
 }

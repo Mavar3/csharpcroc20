@@ -11,8 +11,11 @@ namespace CROCK_CsharpBot
     {
         [Description("Начало работы с ботом")]
         Start,
-        [Description("Начало работы с ботом")]
-        Help
-
+        [Description("Помощь в работе с ботом")]
+        Help,
+        [Description("Регистрация для работы с ботом")]
+        Registration,
+        [Description("Информация о боте")]
+        Info
     }
 }

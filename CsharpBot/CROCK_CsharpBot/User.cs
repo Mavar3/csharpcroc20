@@ -37,5 +37,7 @@ namespace CROCK_CsharpBot
 
         [XmlText]
         public string Discription;
+
+        public UserState State;
     }
 }

@@ -11,6 +11,7 @@ using System.ComponentModel.Design;
 using CrocCSharpBot;
 using Telegram.Bot.Args;
 using System.Reflection;
+using System.Dynamic;
 
 namespace CROCK_CsharpBot
 {
@@ -34,7 +35,7 @@ namespace CROCK_CsharpBot
             state = BotState.Load(Properties.Settings.Default.FileName); 
         }
 
-        private void MessagProcessor(object sender, Telegram.Bot.Args.MessageEventArgs e)
+        private async void MessagProcessor(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             try
             {
@@ -46,12 +47,13 @@ namespace CROCK_CsharpBot
                 System.Reflection.MethodInfo info = GetType().GetMethod(method);
                 if (info == null)
                 {
-                    client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There\n" +
+                    await client.SendTextMessageAsync(e.Message.Chat.Id, "Hi There\n" +
                              $"Ты прислал мне: {e.Message.Type}");
                     log.Trace(e.Message.Type);
                     return;
                 }
-                info.Invoke(this, new object[] { e });
+                Task invokeTask = (Task)info.Invoke(this, new object[] { e });
+                await invokeTask;
 
                 // switch (e.Message.Type)
                 // {
@@ -84,6 +86,7 @@ namespace CROCK_CsharpBot
             // throw new NotImplementedException();
             finally
             {
+                //Выходит раньше сохранения и отправки. В Invoke нельзя использовать await
                 log.Trace("|-> MessagProcessor");
             }
         }
@@ -144,45 +147,85 @@ namespace CROCK_CsharpBot
 
         public async Task PhotoMessage(MessageEventArgs e)
         {
-            log.Info("\nНачало сохранения и отправки сохранённого фото.\n");
-            await DownloadPhotoOrDocument(e.Message.Photo.LastOrDefault().FileId);
-            await SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id);
+            log.Info("\n-------------------------------------\n" + 
+                "Начало сохранения и отправки сохранённого фото.\n");
+            string dir = Properties.Settings.Default.SavedPhotoDir;
+            dir = dir.Substring(0, 1).ToUpper() + dir.Substring(1).ToLower() + "//";
+            if (await DownloadPhotoOrDocument(e.Message.Photo.LastOrDefault().FileId, dir))
+            {
+                await SendPhoto(e.Message.Photo.LastOrDefault().FileId, e.Message.Chat.Id, dir);
+            }
+            else
+            {
+                await client.SendTextMessageAsync(e.Message.Chat.Id, "Упс, что-то пошло не так!");
+            }
         }
 
         public async Task DocumentMessage(MessageEventArgs e)
         {
-            log.Info("\nНачало сохранения и отправки сохранённого документа.\n");
-            await DownloadPhotoOrDocument(e.Message.Document.FileId);
-            await SendDocument(e.Message.Document.FileId, e.Message.Chat.Id);
+            string dir = Properties.Settings.Default.SavedDocumentDir;
+            dir = dir.Substring(0, 1).ToUpper() + dir.Substring(1).ToLower() + "//";
+            log.Info("\n-------------------------------------\n" +
+                "Начало сохранения и отправки сохранённого документа.\n");
+            if (await DownloadPhotoOrDocument(e.Message.Document.FileId, dir))
+            {
+                await SendDocument(e.Message.Document.FileId, e.Message.Chat.Id, dir);
+            }
+            else
+            {
+                await client.SendTextMessageAsync(e.Message.Chat.Id, "Упс, что-то пошло не так!");
+            }
         }
 
-        public async Task DownloadPhotoOrDocument(string fileId)
+        private void MkDir(string path)
+        {
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    log.Info($"Я попытался создать путь, но он уже существует: {path}");
+                    return;
+                }
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                log.Info($"Путь создан: {path}");
+            }
+            catch(Exception ex)
+            {
+                log.Error($"Не удаётся создать данный путь: {ex}");
+            }
+        }
+
+        public async Task<bool> DownloadPhotoOrDocument(string fileId, string dir = "SavedInformation//")
         {
             try
             {
                 var file = await client.GetFileAsync(fileId);
+                MkDir(dir);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                log.Trace($"File name 4 d: {filename}\n" +
-                    $"-----------------------------------");
-                using (var saveImageOrDocStream = System.IO.File.Open(filename, FileMode.Create))
+                using (var saveImageOrDocStream = System.IO.File.Open(dir + filename, FileMode.Create))
                 {
                     await client.DownloadFileAsync(file.FilePath, saveImageOrDocStream);
                 }
+                log.Trace($"File name 4 d: {filename}\n" +
+                    $"-----------------------------------");
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error("Error downloading: " + ex.Message);
+                return false;
             }
         }
 
-        public async Task SendDocument(string fileId, long chatId)
+        public async Task SendDocument(string fileId, long chatId, string dir = "SavedInformation//")
         {
             try
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                log.Trace($"File name 4 s: {filename}\n");
-                using (var sendImageStream = System.IO.File.OpenRead(filename))
+                log.Trace($"File name 4 s: {filename}\n" +
+                    $"-------------------------------------");
+                using (var sendImageStream = System.IO.File.OpenRead(dir + filename))
                 {
                     await client.SendDocumentAsync(chatId, sendImageStream, "That's your document. I saved it on server and than resend!");
                 }
@@ -193,14 +236,15 @@ namespace CROCK_CsharpBot
             }
         }
 
-        public async Task SendPhoto(string fileId, long chatId)
+        public async Task SendPhoto(string fileId, long chatId, string dir = "SavedInformation//")
         {
             try
             {
                 var file = await client.GetFileAsync(fileId);
                 var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                log.Trace($"File name 4 s: {filename}\n");
-                using (var sendImageStream = System.IO.File.OpenRead(filename))
+                log.Trace($"File name 4 s: {filename}\n" +
+                    $"-------------------------------------");
+                using (var sendImageStream = System.IO.File.OpenRead(dir + filename))
                 {
                     // await client.SendMediaGroupAsync(chatId, sendImageStream, false);
                     await client.SendPhotoAsync(chatId, sendImageStream, "That's your photo. I saved it on server and than resend!");
@@ -227,6 +271,7 @@ namespace CROCK_CsharpBot
                     return;
                 }
                 info.Invoke(this, new object[] { message });
+                log.Trace($"|{ method }|");
 
                 // switch (command)
                 // {
@@ -274,7 +319,7 @@ namespace CROCK_CsharpBot
 
         public void RegistrationCommand(Telegram.Bot.Types.Message message)
         {
-            User user = state[message.Chat.Id];
+            //User user = state[message.Chat.Id];
             var button = new KeyboardButton("Поделиcь телефоном")
             {
                 RequestContact = true

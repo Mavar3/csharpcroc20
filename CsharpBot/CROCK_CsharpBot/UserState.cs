@@ -8,5 +8,7 @@ namespace CROCK_CsharpBot
 {
     public enum UserState
     {
+        None,
+        Register
     }
 }

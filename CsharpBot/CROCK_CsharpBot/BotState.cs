@@ -25,6 +25,12 @@ namespace CROCK_CsharpBot
             get
             {
                 User user = Users.Where(a => a.ID == id).FirstOrDefault();
+                if (Users == null)
+                {
+                    user = new User();
+                    Array.Resize(ref Users, Users.Length + 1);
+                    Users[Users.Length - 1] = user;
+                }
                 return user;
             }
         }

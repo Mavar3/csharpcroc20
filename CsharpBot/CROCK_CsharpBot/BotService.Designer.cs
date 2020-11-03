@@ -28,8 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            // 
+            // BotService
+            // 
+            this.AutoLog = false;
+            this.CanPauseAndContinue = true;
             this.ServiceName = "BotService";
+
         }
 
         #endregion
