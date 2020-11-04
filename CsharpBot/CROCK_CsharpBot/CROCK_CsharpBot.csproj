@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="BotState.cs" />
     <Compile Include="Comand.cs" />
+    <Compile Include="Dir.cs" />
     <Compile Include="EnumExtenders.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">

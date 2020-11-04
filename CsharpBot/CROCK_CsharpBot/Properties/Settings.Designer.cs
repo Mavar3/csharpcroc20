@@ -34,7 +34,7 @@ namespace CROCK_CsharpBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\botstate.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\CrocBot\\BotState\\botstate.xml")]
         public string FileName {
             get {
                 return ((string)(this["FileName"]));

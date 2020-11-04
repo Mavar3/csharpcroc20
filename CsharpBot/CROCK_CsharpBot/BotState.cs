@@ -70,7 +70,7 @@ namespace CROCK_CsharpBot
             // Настройка формированя XML-файла
             var setings = new XmlWriterSettings()
             {
-                Indent = true //Делаем читабельным
+                Indent = true, //Делаем читабельным
             };
             // Файл для записи данных
             // (i) using - в случае ошибки, всё равно закрывает файл
@@ -83,6 +83,7 @@ namespace CROCK_CsharpBot
 
         public static BotState Load(string name)
         {
+            Dir.MkDir(name);
             try
             {
                 XmlSerializer s = new XmlSerializer(typeof(BotState));

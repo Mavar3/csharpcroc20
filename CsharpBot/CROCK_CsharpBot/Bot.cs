@@ -86,7 +86,6 @@ namespace CROCK_CsharpBot
             // throw new NotImplementedException();
             finally
             {
-                //Выходит раньше сохранения и отправки. В Invoke нельзя использовать await
                 log.Trace("|-> MessagProcessor");
             }
         }
@@ -183,7 +182,7 @@ namespace CROCK_CsharpBot
             {
                 if (Directory.Exists(path))
                 {
-                    log.Info($"Я попытался создать путь, но он уже существует: {path}");
+                    log.Info($"Сохраняю в: {path}");
                     return;
                 }
                 DirectoryInfo di = Directory.CreateDirectory(path);
